@@ -20,12 +20,13 @@ def sendData(command):
                 s.connect(peer)
                 msg = command
                 s.send(msg.encode())
+                print("Sent command", msg)
                 sent = True
+                ack = s.recv(1024)
+                print("Acknowledgement received", ack)
                 s.close()
             except Exception:
                 print("An exception occured")
-        if sent:
-            print("Sensor data sent to known vehicles")
 
 def main():
     # parser = argparse.ArgumentParser()
