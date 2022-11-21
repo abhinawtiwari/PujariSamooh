@@ -55,7 +55,7 @@ class Peer:
                     action = ''
                 # host = dataMessage[1]
                 # port = int(dataMessage[3])
-                peer = (host, port, action)
+                peer = (host, port, action.lower())
                 if peer != (self.host, self.port, action) and peer not in self.peers:
                     self.peers.add(peer)
                     print('Known vehicles:', self.peers)
@@ -71,8 +71,6 @@ class Peer:
     def filter_ips(self,data):
         if data in map_dict.keys():
             return map_dict[data]
-        else:
-            return "MAA CHUDAO BHSODIKE"
     
 
     def receiveData(self):
@@ -91,7 +89,7 @@ class Peer:
             data = conn.recv(1024)
             data = data.decode('utf-8')
             print(data, " to actuate on")
-            interset = self.parse_interest(data)
+            interset = self.parse_interest(data.lower())
             print("Final interset", interset)
             filtered_ips =  self.filter_ips(interset)
             ack = self.route_to_pi(filtered_ips,interset)
@@ -110,6 +108,15 @@ class Peer:
         conn.send(msg)
         print("Sent command", msg)
         return
+
+    def remove_node(self, node, command):
+        try:
+            print("REMOVING NODE", node)
+            if node in map_dict[command]:
+                map_dict[command].remove(node)
+            print("UPDATED MAP DICT", map_dict)
+        except:
+            print("ERROR IN REMOVING NODE")
 
 
 
@@ -134,6 +141,9 @@ class Peer:
                 return ack
             except Exception:
                 print("An exception occured")
+                continue
+                #self.remove_node(peer,command)
+                
 
     def maintain_router(self):
         empty_set = set()
