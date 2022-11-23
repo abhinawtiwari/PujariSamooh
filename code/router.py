@@ -11,7 +11,7 @@ map_dict = {}
 
 
 def tabular_display(temp_dict):
-    print("{:<25} | {:<15}".format('IP_ADDR', 'ACTION'))
+    print("{:<25} | {:<15}".format('ACTION', 'IP_ADDR'))
     for key, val in temp_dict.items():
         print("{:<25} | {:<15}".format(key, str(val)))
 
