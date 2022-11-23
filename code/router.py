@@ -1,16 +1,19 @@
-import selectors
 import socket
 import threading
 import time
 import base64
-import types
-from tabulate import tabulate
 
 PEER_PORT = 33301  # Port for listening to other peers
 BCAST_PORT = 33334  # Port for broadcasting own address
 INTEREST_PORT = 33310
 
 map_dict = {}
+
+
+def tabular_display(temp_dict):
+    print("{:<25} | {:<15}".format('IP_ADDR', 'ACTION'))
+    for key, val in temp_dict.items():
+        print("{:<25} | {:<15}".format(key, str(val)))
 
 
 class Peer:
@@ -68,7 +71,6 @@ class Peer:
 
                 peer = (host, port, action_list)
 
-
                 if peer != (self.host, self.port, action_list) and peer not in self.peers:
                     self.peers.add(peer)
                     print('Known vehicles:', self.peers)
@@ -83,14 +85,10 @@ class Peer:
         if data in map_dict.keys():
             return map_dict[data]
 
-    def tabular_dsiplay(self, dictonary):
-        col_names = ['ip_addr', 'action']
-        print(tabulate(dictonary, headers=col_names, tablefmt='grid'))
-
     def split_using_act(self, act_string):
 
-        temp_str = act_string[1].replace('[','').replace(']','').replace(' ','').lower()
-        #new_ls = temp_str.split(',')
+        temp_str = act_string[1].replace('[', '').replace(']', '').replace(' ', '').lower()
+        # new_ls = temp_str.split(',')
         return str(temp_str)
 
     # def receiveData(self):
@@ -119,7 +117,6 @@ class Peer:
     #         # sendAck(addr[0], actuationResult)
     #         conn.close()
     #         time.sleep(1)
-
 
     def receiveData(self):
         """Listen on own port for other peer data."""
@@ -167,7 +164,7 @@ class Peer:
             print("REMOVING NODE", node)
             if node in map_dict[command]:
                 map_dict[command].remove(node)
-            print("UPDATED MAP DICT", self.tabular_dsiplay(map_dict))
+            print("UPDATED MAP DICT", tabular_display(map_dict))
         except:
             print("ERROR IN REMOVING NODE")
 
@@ -220,7 +217,7 @@ class Peer:
                     empty_set.add(host)
                     map_dict[action] = empty_set
             count += 1
-        print("What is router table now",self.tabular_dsiplay(map_dict))
+        print("What is router table now", tabular_display(map_dict))
 
 
 def main():
