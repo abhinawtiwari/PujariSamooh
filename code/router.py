@@ -84,7 +84,8 @@ class Peer:
             return map_dict[data]
 
     def tabular_dsiplay(self, dictonary):
-        print(tabulate(dictonary, headers='firstrow', tablefmt='grid'))
+        col_names = ['ip_addr', 'action']
+        print(tabulate(dictonary, headers=col_names, tablefmt='grid'))
 
     def split_using_act(self, act_string):
 
