@@ -4,6 +4,7 @@ import threading
 import time
 import base64
 import types
+from tabulate import tabulate
 
 PEER_PORT = 33301  # Port for listening to other peers
 BCAST_PORT = 33334  # Port for broadcasting own address
@@ -82,6 +83,8 @@ class Peer:
         if data in map_dict.keys():
             return map_dict[data]
 
+    def tabular_dsiplay(self, dictonary):
+        print(tabulate(dictonary, headers='firstrow', tablefmt='grid'))
 
     def split_using_act(self, act_string):
 
@@ -163,7 +166,7 @@ class Peer:
             print("REMOVING NODE", node)
             if node in map_dict[command]:
                 map_dict[command].remove(node)
-            print("UPDATED MAP DICT", map_dict)
+            print("UPDATED MAP DICT", self.tabular_dsiplay(map_dict))
         except:
             print("ERROR IN REMOVING NODE")
 
@@ -216,7 +219,7 @@ class Peer:
                     empty_set.add(host)
                     map_dict[action] = empty_set
             count += 1
-        print("What is router table now", map_dict)
+        print("What is router table now",self.tabular_dsiplay(map_dict))
 
 
 def main():
