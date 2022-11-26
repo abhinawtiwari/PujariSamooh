@@ -100,6 +100,7 @@ def callActuator(interest):
 def receiveData():
         print("listening for actuation requests")
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         hostname = socket.gethostname()
         host = socket.gethostbyname(hostname)
         port = PEER_PORT
