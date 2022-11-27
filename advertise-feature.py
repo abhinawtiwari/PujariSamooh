@@ -116,7 +116,7 @@ class Peer:
         dynamic_advertise_string = vehicle_type.lower() + '_advertise_string'
         adv = features_dict[dynamic_advertise_string]
         message = f'HOST {self.host} PORT {self.port} ACTION {adv}'
-        print('Advertising ', message)
+        print('Advertising ', adv)
         s.send(message.encode())
         s.close()
 
