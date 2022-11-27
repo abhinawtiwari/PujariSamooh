@@ -10,10 +10,20 @@ INTEREST_PORT = 33310
 map_dict = {}
 
 
+# def tabular_display(temp_dict):
+#     print("{:<25} | {:<15}".format('ACTION', 'IP_ADDR'))
+#     for key, val in temp_dict.items():
+#         print("{:<25} | {:<15}".format(key, str(val)))
+
+
 def tabular_display(temp_dict):
-    print("{:<25} | {:<15}".format('ACTION', 'IP_ADDR'))
+    print("{:<25} | {:<15}".format('Features', 'Vehicle'))
     for key, val in temp_dict.items():
-        print("{:<25} | {:<15}".format(key, str(val)))
+        new_val = []
+        for v in val:
+            v = key.split('/')[0] + '_' + v.split('.')[-1]
+            new_val.append(v)
+        print("{:<25} | {:<15}".format(key, str(new_val)))
 
 
 class Peer:
@@ -34,21 +44,39 @@ class Peer:
         sample_string = sample_string_bytes.decode("ascii")
         return sample_string
 
+    def countVehicles(self):
+        # print("vehicles in network: ", self.peers)
+        vehicle_dict = {
+            "truck": 0,
+            "bike": 0,
+            "car": 0
+        }
+        for v in self.peers:
+            # print(v[0])
+            vehicleType = v[2].split('/')[0]
+            # vehicleName = v[0].split('.')[-1]
+            vehicle_dict[vehicleType] = vehicle_dict[vehicleType] + 1
+
+        print("Number of vehicles in network: ", vehicle_dict)
+
     def updatePeerList(self):
         """Update peers list on receipt of their address broadcast."""
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         hostname = socket.gethostname()
         host = socket.gethostbyname(hostname)
         port = BCAST_PORT
         s.bind((host, port))
+
         s.listen(5)
         while True:
             conn, addr = s.accept()
             
-            print("Advertisement received from: ", addr[0])
+            # print("Advertisement received from: ", addr[0])
             # print("BRconnection: ", str(conn))
-            print('Known vehicles:', self.peers)
-            print("Router table now: ", tabular_display(map_dict))
+            # print('Known vehicles:', self.peers)
+            # print("Router table now: ", tabular_display(map_dict))
+            # tabular_display(map_dict)
 
             data = conn.recv(1024)
             # #print("Base 64 decode data updat peer", data)
@@ -77,8 +105,10 @@ class Peer:
 
                 if peer != (self.host, self.port, action_list) and peer not in self.peers:
                     self.peers.add(peer)
-                    print('Known vehicles:', self.peers)
+                    # print('Known vehicles:', self.peers)
                     self.maintain_router()
+            # print('Number of vehicles in network: ', len(self.peers))
+            self.countVehicles()
             time.sleep(2)
 
     def parse_interest(self, interest):
@@ -98,37 +128,10 @@ class Peer:
         # new_ls = temp_str.split(',')
         return str(temp_str)
 
-    # def receiveData(self):
-    #     """Listen on own port for other peer data."""
-    #     print("listening for interest data")
-    #     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    #     hostname = socket.gethostname()
-    #     host = socket.gethostbyname(hostname)
-    #     port = INTEREST_PORT
-    #     s.bind((host, port))
-    #     s.listen(5)
-    #     while True:
-    #         conn, addr = s.accept()
-    #         print("addr: ", addr[0])
-    #         print("connection: ", str(conn))
-    #         data = conn.recv(1024)
-    #         base64_decode = self.decrypt(data)
-    #         utf_data = base64_decode.decode('utf-8')
-    #         print(utf_data, " to actuate on")
-    #         interset = self.parse_interest(utf_data.lower())
-    #         print("Final interset", interset)
-    #         filtered_ips = self.filter_ips(interset)
-    #         ack = self.route_to_pi(filtered_ips, interset)
-    #         self.send_back_to_interested_node(ack, addr[0], conn)
-    #         # call actuators
-    #         # sendAck(addr[0], actuationResult)
-    #         conn.close()
-    #         time.sleep(1)
-
     def send_none_to_intereseted_node(self,host,conn):
         msg = "404 not found"
         encoded_msg = str(self.encrypt(msg)).encode()
-        print("WHAT IS ENCODED BACK TO SENDEr", encoded_msg)
+        # print("WHAT IS ENCODED BACK TO SENDEr", encoded_msg)
         conn.send(encoded_msg)
         return
         
@@ -137,6 +140,7 @@ class Peer:
         """Listen on own port for other peer data."""
         print("listening for interest data")
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         hostname = socket.gethostname()
         host = socket.gethostbyname(hostname)
         port = INTEREST_PORT
@@ -144,17 +148,17 @@ class Peer:
         s.listen(5)
         while True:
             conn, addr = s.accept()
-            print("addr: ", addr[0])
-            print("connection: ", str(conn))
+            # print("addr: ", addr[0])
+            # print("connection: ", str(conn))
             data = conn.recv(1024)
-            print("Received data", data)
+            # print("Received data", data)
             utf_data = data.decode()
-            print("Decoded data", utf_data)
+            # print("Decoded data", utf_data)
             base64_decode = self.decrypt(utf_data)
-            print("Base 64 decode data", base64_decode)
+            # print("Base 64 decode data", base64_decode)
             # print(utf_data, " to actuate on")
             interset = self.parse_interest(base64_decode.lower())
-            print("Final interest", interset)
+            print("\nInterest packet: ", interset)
             filtered_ips = self.filter_ips(interset)
             if filtered_ips is None:
                 self.send_none_to_intereseted_node(addr[0],conn)
@@ -171,13 +175,14 @@ class Peer:
         # s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # s.connect((host,INTEREST_PORT))
         msg = message
-        print("Msg inside send_back_to_interested_node: ", msg)
+        print("Data packet: ", msg)
         # encoded_msg = 'Sensors/actuators not available to serve this request'.encode()
         if msg is not None:
             encoded_msg = str(self.encrypt(msg)).encode()
         else:
             encoded_msg = str(self.encrypt('Sensors/actuators not available to serve this request')).encode()
-        print("WHAT IS ENCODED BACK TO SENDEr", encoded_msg)
+        # print("WHAT IS ENCODED BACK TO SENDEr", encoded_msg)
+        print('\n')
         conn.send(encoded_msg)
         return
 
@@ -187,6 +192,7 @@ class Peer:
             if node in map_dict[command]:
                 map_dict[command].remove(node)
             print("UPDATED MAP DICT", tabular_display(map_dict))
+            self.countVehicles()
         except:
             print("ERROR IN REMOVING NODE")
 
@@ -194,22 +200,22 @@ class Peer:
         """Send sensor data to all peers."""
         sent = False
         # if command == 'ALERT':
-        print("What is peer list and command :{} {}".format(peer_list, command))
+        # print("What is peer list and command :{} {}".format(peer_list, command))
         for peer in peer_list:
-            print("What is peer inside peerlist", peer)
+            # print("What is peer inside peerlist", peer)
             try:
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 s.connect((peer, PEER_PORT))
                 msg = command
-                print("Idhar aaya kya", msg)
+                # print("Idhar aaya kya", msg)
                 s.send(str(self.encrypt(msg)).encode())
-                print("Sent command", msg)
+                print("Interest ", msg, " sent to endpoint for fulfillment")
                 sent = True
                 ack = s.recv(1024)
-                print("Acknowledgement received", ack)
+                # print("Acknowledgement received", ack)
                 utf_decode = ack.decode()
                 base64_ack = self.decrypt(utf_decode)
-                print("Base 64 ack", base64_ack)
+                # print("Base 64 ack", base64_ack)
                 s.close()
                 return base64_ack
             except Exception:
@@ -233,13 +239,11 @@ class Peer:
                     temp_set = map_dict[action]
                     temp_set.add(host)
                     map_dict[action] = temp_set
-
-
                 else:
                     empty_set.add(host)
                     map_dict[action] = empty_set
             count += 1
-        print("What is router table now", tabular_display(map_dict))
+        # print("What is router table now", tabular_display(map_dict))
 
 
 def main():

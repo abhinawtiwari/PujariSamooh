@@ -34,16 +34,16 @@ def sendAck(conn, raddr, result):
             print('exception occurred while sending acknowledgement: ', Exception)
 
 def senseSpeed():
-    baseSpeed = 20
+    baseSpeed = 80
     randomMix = random.randint(-10, 10)
     res = baseSpeed + randomMix
-    return str(res) + " km/h"
+    return res
 
 def senseProximity():
     baseProximity = 20
     randomMix = random.randint(-10, 10)
     res = baseProximity + randomMix
-    return str(res) + " metres"
+    return res
 
 def sensePressure():
     if VEHICLE_TYPE == 'car':
@@ -51,23 +51,23 @@ def sensePressure():
     elif VEHICLE_TYPE == 'bike':
         val = random.randint(80, 130) # two wheeler tyre pressure
     else:
-        val = random.randint(116, 131) # truck tyre pressure
-    return str(val) + " psi"
+        val = random.randint(80, 131) # truck tyre pressure
+    return val
 
 def senseLight():
-    state = ['on', 'off']
+    state = ['on', 'off', 'faulty']
     return random.choice(state)
 
 def senseWiper():
-    state = ['off', 'on-slow', 'on-medium', 'on-fast']
+    state = ['off', 'on', 'faulty']
     return random.choice(state)
 
 def sensePassengerCount():
-    if VEHICLE_TYPE == 'car':
-        val = random.randint(1, 4) # car
+    if VEHICLE_TYPE == 'truck':
+        val = random.randint(1, 6) # car
     else:
-        val = random.randint(1, 2) # bike, truck 
-    return str(val) 
+        val = random.randint(1, 3) # bike, truck 
+    return val
 
 def senseFuel():
     state = ['low', 'medium', 'full']
@@ -77,7 +77,7 @@ def senseEngineTemperature():
     baseTemp = 200
     randomMix = random.randint(-5, 20)
     res = baseTemp + randomMix
-    return str(res) + " degree celcius"
+    return res
 
 def callActuator(interest):
     if interest.lower() == "speed":
