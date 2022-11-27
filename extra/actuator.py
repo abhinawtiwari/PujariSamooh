@@ -21,14 +21,9 @@ def bdecode(toDecode):
     return sample_string
 
 def sendAck(conn, raddr, result):
-        """Send sensor data to all peers."""
         try:
-            # s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            # s.connect((raddr, SENSOR_PORT))
             msg = result
             conn.send(bencode(msg).encode())
-            # sent = True
-            # s.close()
         except Exception:
             print(traceback.format_exc())
             print('exception occurred while sending acknowledgement: ', Exception)
@@ -64,9 +59,9 @@ def senseWiper():
 
 def sensePassengerCount():
     if VEHICLE_TYPE == 'truck':
-        val = random.randint(1, 6) # car
-    else:
-        val = random.randint(1, 3) # bike, truck 
+        val = random.randint(1, 6)
+    else: # bike, car
+        val = random.randint(1, 3)
     return val
 
 def senseFuel():

@@ -60,7 +60,7 @@ class Peer:
         print("Number of vehicles in network: ", vehicle_dict)
 
     def updatePeerList(self):
-        """Update peers list on receipt of their address broadcast."""
+        """Update sensors list on receipt of their advertised features."""
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         hostname = socket.gethostname()

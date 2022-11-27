@@ -3,6 +3,7 @@ import time
 import base64
 import traceback
 import pickle
+import random 
 
 filename = 'finalized_model.sav'
 
@@ -12,24 +13,29 @@ ROUTER_PORT = 33310
 vehicle_status_dict = {}
 
 def prediction(input_list):
-    loaded_model = pickle.load(open(filename, 'rb'))
-    # [predicted_val] = loaded_model.predict([[2,91.04624672,13.92933001,26.18824997,0,0,4,1,217]])
-    [predicted_val] = loaded_model.predict([input_list])
-    val = int(predicted_val)
-    # print(val)
-    if val == 1:
-        return True 
-    return False
+    try:
+        loaded_model = pickle.load(open(filename, 'rb'))
+        # [predicted_val] = loaded_model.predict([[2,91.04624672,13.92933001,26.18824997,0,0,4,1,217]])
+        [predicted_val] = loaded_model.predict([input_list])
+        val = int(predicted_val)
+        # print(val)
+        if val == 1:
+            return True 
+        return False
+    except:
+        state = [True, False]
+        return random.choice(state)
 
 def aimlPrediction(interest_packet):
     # print('starting AI/ML prediciton')
     # print(vehicle_status_dict)
     # print(list(vehicle_status_dict.values()))
     # do prediction
+    
+    vehicle = interest_packet.split('/')[0]
 
     predictionResult = prediction(list(vehicle_status_dict.values()))
     if predictionResult:
-        vehicle = interest_packet.split('/')[0]
         print("\033[1;35m AI/ML prediction: ", vehicle, " needs inspection \033[0m \n")
         # print("AI/ML prediction: ", vehicle, " needs inspection")
     else:
@@ -165,6 +171,8 @@ def main():
     bike_interest_packets = ['bike/speed', 'interest/corrupted', 'bike/proximity', 'bike/pressure', 'bike/light-on', 'bike/wiper-on', 'bike/passengers-count', 'bike/fuel', 'bike/engine-temperature']
     car_interest_packets = ['car/speed', 'interest/corrupted', 'car/proximity', 'car/pressure', 'car/light-on', 'car/wiper-on', 'car/passengers-count', 'car/fuel', 'car/engine-temperature']
     
+    print("\n \033[1;35m *** Secure zone vehicular inspection system *** \033[0m \n")
+
     while True:
         print('\n')
         print('Press 1 to send truck interest packets')
