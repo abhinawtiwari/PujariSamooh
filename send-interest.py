@@ -124,11 +124,25 @@ def actuate(interest_packet, data_packet):
     elif interest_packet == 'bike/light-on':
         print('Bike is appraoching with headlight ', data_packet)
         feature = interest_packet.split('/')[1]
-        vehicle_status_dict[feature] = data_packet
+        val = 0
+        if data_packet == 'on':
+            val = 0
+        elif data_packet == 'off':
+            val = 1
+        else:
+            val = 2
+        vehicle_status_dict[feature] = val
     elif interest_packet == 'bike/wiper-on':
         print('Bike is appraoching with wiper ', data_packet)
         feature = interest_packet.split('/')[1]
-        vehicle_status_dict[feature] = data_packet
+        val = 0
+        if data_packet == 'on':
+            val = 0
+        elif data_packet == 'off':
+            val = 1
+        else:
+            val = 2
+        vehicle_status_dict[feature] = val
     elif interest_packet == 'bike/passengers-count':
         print('Bike is appraoching with passengers count ', data_packet)
         feature = interest_packet.split('/')[1]
@@ -136,9 +150,69 @@ def actuate(interest_packet, data_packet):
     elif interest_packet == 'bike/fuel':
         print('Bike is appraoching with fuel quantity ', data_packet)
         feature = interest_packet.split('/')[1]
-        vehicle_status_dict[feature] = data_packet
+        val = 0
+        if data_packet == 'low':
+            val = 0
+        elif data_packet == 'medium':
+            val = 1
+        else:
+            val = 2
+        vehicle_status_dict[feature] = val
     elif interest_packet == 'bike/engine-temperature':
         print('Bike is appraoching with engine temperature of ', data_packet)
+        feature = interest_packet.split('/')[1]
+        vehicle_status_dict[feature] = data_packet
+    elif interest_packet == 'car/speed':
+        print('car is appraoching with speed of ', data_packet)
+        feature = interest_packet.split('/')[1]
+        vehicle_status_dict[feature] = data_packet
+    elif interest_packet == 'car/proximity':
+        print('car is appraoching with proximity of ', data_packet)
+        feature = interest_packet.split('/')[1]
+        vehicle_status_dict[feature] = data_packet
+    elif interest_packet == 'car/pressure':
+        print('car is appraoching with tyre pressure of ', data_packet)
+        feature = interest_packet.split('/')[1]
+        vehicle_status_dict[feature] = data_packet
+    elif interest_packet == 'car/light-on':
+        print('car is appraoching with headlight ', data_packet)
+        feature = interest_packet.split('/')[1]
+        val = 0
+        if data_packet == 'on':
+            val = 0
+        elif data_packet == 'off':
+            val = 1
+        else:
+            val = 2
+        vehicle_status_dict[feature] = val
+    elif interest_packet == 'car/wiper-on':
+        print('car is appraoching with wiper ', data_packet)
+        feature = interest_packet.split('/')[1]
+        val = 0
+        if data_packet == 'on':
+            val = 0
+        elif data_packet == 'off':
+            val = 1
+        else:
+            val = 2
+        vehicle_status_dict[feature] = val
+    elif interest_packet == 'car/passengers-count':
+        print('car is appraoching with passengers count ', data_packet)
+        feature = interest_packet.split('/')[1]
+        vehicle_status_dict[feature] = data_packet
+    elif interest_packet == 'car/fuel':
+        print('car is appraoching with fuel quantity ', data_packet)
+        feature = interest_packet.split('/')[1]
+        val = 0
+        if data_packet == 'low':
+            val = 0
+        elif data_packet == 'medium':
+            val = 1
+        else:
+            val = 2
+        vehicle_status_dict[feature] = val
+    elif interest_packet == 'car/engine-temperature':
+        print('car is appraoching with engine temperature of ', data_packet)
         feature = interest_packet.split('/')[1]
         vehicle_status_dict[feature] = data_packet
 

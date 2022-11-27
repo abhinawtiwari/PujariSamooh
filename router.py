@@ -59,6 +59,11 @@ class Peer:
 
         print("Number of vehicles in network: ", vehicle_dict)
 
+    def removeDueToInactivity(self, peer):
+        self.peers.remove(peer)
+        print(peer[2].split('/')[0], " processed. Removing from system...")
+        self.countVehicles()
+
     def updatePeerList(self):
         """Update sensors list on receipt of their advertised features."""
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -105,6 +110,8 @@ class Peer:
 
                 if peer != (self.host, self.port, action_list) and peer not in self.peers:
                     self.peers.add(peer)
+                    t = threading.Timer(120, self.removeDueToInactivity, [peer])
+                    t.start()
                     # print('Known vehicles:', self.peers)
                     self.maintain_router()
             # print('Number of vehicles in network: ', len(self.peers))

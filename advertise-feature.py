@@ -68,9 +68,9 @@ def senseWiper():
     return random.choice(state)
 
 def sensePassengerCount():
-    if vehicle_type == 'truck':
+    if vehicle_type == 'car':
         val = random.randint(1, 6)
-    else: # bike, car
+    else: # bike, truck
         val = random.randint(1, 3)
     return str(val)
 
