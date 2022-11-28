@@ -2,6 +2,7 @@ import socket
 import threading
 import time
 import base64
+import traceback
 
 PEER_PORT = 33301  # Port for listening to other peers
 BCAST_PORT = 33334  # Port for broadcasting own address
@@ -61,8 +62,11 @@ class Peer:
 
     def removeDueToInactivity(self, peer):
         self.peers.remove(peer)
-        print(peer[2].split('/')[0], " processed. Removing from system...")
+        print('\n')
+        print(peer[2].split('/')[0], "processed. Removing from system...")
+        self.remove_node(peer[0])
         self.countVehicles()
+        # tabular_display(map_dict)
 
     def updatePeerList(self):
         """Update sensors list on receipt of their advertised features."""
@@ -110,9 +114,11 @@ class Peer:
 
                 if peer != (self.host, self.port, action_list) and peer not in self.peers:
                     self.peers.add(peer)
-                    t = threading.Timer(120, self.removeDueToInactivity, [peer])
+                    t = threading.Timer(45, self.removeDueToInactivity, [peer])
                     t.start()
                     # print('Known vehicles:', self.peers)
+                    print('\n')
+                    print(peer[2].split('/')[0], 'arrived. Added to system')
                     self.maintain_router()
             # print('Number of vehicles in network: ', len(self.peers))
             self.countVehicles()
@@ -193,15 +199,17 @@ class Peer:
         conn.send(encoded_msg)
         return
 
-    def remove_node(self, node, command):
+    def remove_node(self, host):
         try:
-            print("REMOVING NODE", node)
-            if node in map_dict[command]:
-                map_dict[command].remove(node)
-            print("UPDATED MAP DICT", tabular_display(map_dict))
-            self.countVehicles()
-        except:
+            # print(map_dict)
+            # print('host: ', host)
+            for key, val in map_dict.items():
+                if host in val:
+                    val.remove(host)
+        except Exception:
+            print(traceback.format_exc())
             print("ERROR IN REMOVING NODE")
+            print('map_dict after removing error: ', map_dict)
 
     def route_to_pi(self, peer_list, command):
         """Send sensor data to all peers."""
@@ -228,7 +236,6 @@ class Peer:
             except Exception:
                 print("An exception occured")
                 continue
-                # self.remove_node(peer,command)
 
     def maintain_router(self):
         empty_set = set()
@@ -261,7 +268,7 @@ def main():
     t1 = threading.Thread(target=peer.updatePeerList)
     t2 = threading.Thread(target=peer.receiveData)
     t1.start()
-    time.sleep(15)
+    time.sleep(5)
     t2.start()
 
 

@@ -9,6 +9,8 @@ PEER_PORT = 33301    # Port for listening to other peers
 
 ROUTER_HOST = '10.35.70.28'
 ROUTER_PORT = 33334
+BACKUP_ROUTER_HOST = '10.35.70.34'
+BACKUP_ROUTER_PORT = 33334
 
 vehicle_type = 'car' # bike, truck possible
 
@@ -110,15 +112,31 @@ class Peer:
 
     def advertiseFeature(self):
         """Advertise the host IP."""
-        server_tup = (ROUTER_HOST, ROUTER_PORT)
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect(server_tup)
-        dynamic_advertise_string = vehicle_type.lower() + '_advertise_string'
-        adv = features_dict[dynamic_advertise_string]
-        message = f'HOST {self.host} PORT {self.port} ACTION {adv}'
-        print('Advertising ', adv)
-        s.send(message.encode())
-        s.close()
+        try:
+            print("\nAdvertising to main router.")
+            server_tup = (ROUTER_HOST, ROUTER_PORT)
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect(server_tup)
+            dynamic_advertise_string = vehicle_type.lower() + '_advertise_string'
+            adv = features_dict[dynamic_advertise_string]
+            message = f'HOST {self.host} PORT {self.port} ACTION {adv}'
+            print('Advertising ', adv)
+            s.send(message.encode())
+            s.close()
+        except Exception:
+            print('\n')
+            print(traceback.format_exc())
+            print("An exception occured while connecting to main router. Checking backup router.")
+            server_tup = (BACKUP_ROUTER_HOST, BACKUP_ROUTER_PORT)
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect(server_tup)
+            dynamic_advertise_string = vehicle_type.lower() + '_advertise_string'
+            adv = features_dict[dynamic_advertise_string]
+            message = f'HOST {self.host} PORT {self.port} ACTION {adv}'
+            print('Advertising ', adv)
+            s.send(message.encode())
+            s.close()
+        
 
 def receiveData():
     print("listening for actuation requests")
@@ -156,11 +174,13 @@ def main():
     global vehicle_type
     vehicle_type = val
         
+    t2 = threading.Thread(target=receiveData)
+    t2.start()
+
     while True:
         t1 = threading.Thread(target=peer.advertiseFeature)
         t1.start()
-        time.sleep(10)
-        receiveData()
+        time.sleep(60)
 
 if __name__ == '__main__':
     main()

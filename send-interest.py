@@ -9,6 +9,8 @@ filename = 'finalized_model.sav'
 
 ROUTER_IP = '10.35.70.28'
 ROUTER_PORT = 33310
+BACKUP_ROUTER_IP = '10.35.70.34'
+BACKUP_ROUTER_PORT = 33310
 
 vehicle_status_dict = {}
 
@@ -224,21 +226,30 @@ def actuate(interest_packet, data_packet):
         aimlPrediction(interest_packet)
     
 def sendInterest(interest):
-        routers = {(ROUTER_IP, ROUTER_PORT)}
-        print('attempting to send interest packet: ', interest)
+        router = (ROUTER_IP, ROUTER_PORT)
+        backup_router = (BACKUP_ROUTER_IP, BACKUP_ROUTER_PORT)
+        print('\nattempting to send interest packet: ', interest)
                 
-        for router in routers:
-            try:
-                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                s.connect(router)
-                base64encoded = str(bencode(interest))
-                s.send(base64encoded.encode())
-                ack = s.recv(1024)
-                actuate(interest, bdecode(ack.decode('utf-8')))
-                s.close()
-            except Exception:
-                print(traceback.format_exc())
-                print("An exception occured")
+        # for router in routers:
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect(router)
+            base64encoded = str(bencode(interest))
+            s.send(base64encoded.encode())
+            ack = s.recv(1024)
+            actuate(interest, bdecode(ack.decode('utf-8')))
+            s.close()
+        except Exception:
+            print('\n')
+            print(traceback.format_exc())
+            print("An exception occured while connecting to router. Checking backup router.")
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect(backup_router)
+            base64encoded = str(bencode(interest))
+            s.send(base64encoded.encode())
+            ack = s.recv(1024)
+            actuate(interest, bdecode(ack.decode('utf-8')))
+            s.close()
 
 def main():
     truck_interest_packets = ['truck/speed', 'interest/corrupted', 'truck/proximity', 'truck/pressure', 'truck/light-on', 'truck/wiper-on', 'truck/passengers-count', 'truck/fuel', 'truck/engine-temperature']
@@ -257,30 +268,33 @@ def main():
 
         if val == '1':
             for c in truck_interest_packets:
-                print('press 1 to send next packet, press 2 to change vehicle type')
-                inp = input()
-                if inp != '1':
-                    vehicle_status_dict.clear()
-                    break
+                # print('press 1 to send next packet, press 2 to change vehicle type')
+                # inp = input()
+                # if inp != '1':
+                #     vehicle_status_dict.clear()
+                #     break
                 sendInterest(c)
+                time.sleep(1)
                 print('\n')
         elif val == '2':
             for c in bike_interest_packets:
-                print('press 1 to send next packet, press 2 to change vehicle type')
-                inp = input()
-                if inp != '1':
-                    vehicle_status_dict.clear()
-                    break
+                # print('press 1 to send next packet, press 2 to change vehicle type')
+                # inp = input()
+                # if inp != '1':
+                #     vehicle_status_dict.clear()
+                #     break
                 sendInterest(c)
+                time.sleep(1)
                 print('\n')
         elif val == '3':
             for c in car_interest_packets:
-                print('press 1 to send next packet, press 2 to change vehicle type')
-                inp = input()
-                if inp != '1':
-                    vehicle_status_dict.clear()
-                    break
+                # print('press 1 to send next packet, press 2 to change vehicle type')
+                # inp = input()
+                # if inp != '1':
+                #     vehicle_status_dict.clear()
+                #     break
                 sendInterest(c)
+                time.sleep(1)
                 print('\n')
 
 if __name__ == '__main__':
