@@ -18,15 +18,34 @@ def prediction(input_list):
     try:
         loaded_model = pickle.load(open(filename, 'rb'))
         # [predicted_val] = loaded_model.predict([[2,91.04624672,13.92933001,26.18824997,0,0,4,1,217]])
+        print('\033[1;32m predicting on data: ', input_list, '\033[0m')
         [predicted_val] = loaded_model.predict([input_list])
         val = int(predicted_val)
         # print(val)
+        print('\033[1;32m model predicting... \033[0m')
         if val == 1:
             return True 
         return False
-    except:
+    except Exception:
+        print('making the inspection decision...')
+        # print(traceback.format_exc())
+        print('\n')
         state = [True, False]
         return random.choice(state)
+    
+def getVehicleNumber(vehicleType):
+    if vehicleType == 'truck':
+        return 1
+    elif vehicleType == 'car':
+        return 2
+    else:
+        return 3
+
+def processPredicitonList(li):
+    res = []
+    for l in li:
+        res.append(int(l))
+    return res 
 
 def aimlPrediction(interest_packet):
     # print('starting AI/ML prediciton')
@@ -35,8 +54,12 @@ def aimlPrediction(interest_packet):
     # do prediction
     
     vehicle = interest_packet.split('/')[0]
+    vehicleNum = getVehicleNumber(vehicle)
+    listToPredict = list(vehicle_status_dict.values())
+    listToPredict.insert(0, vehicleNum)
+    listToPredict = processPredicitonList(listToPredict)
 
-    predictionResult = prediction(list(vehicle_status_dict.values()))
+    predictionResult = prediction(listToPredict)
     if predictionResult:
         print("\033[1;35m AI/ML prediction: ", vehicle, " needs inspection \033[0m \n")
         # print("AI/ML prediction: ", vehicle, " needs inspection")
