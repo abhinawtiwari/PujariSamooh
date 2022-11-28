@@ -9,7 +9,7 @@ filename = 'finalized_model.sav'
 
 ROUTER_IP = '10.35.70.28'
 ROUTER_PORT = 33310
-BACKUP_ROUTER_IP = '10.35.70.34'
+BACKUP_ROUTER_IP = '10.35.70.26'
 BACKUP_ROUTER_PORT = 33310
 
 vehicle_status_dict = {}

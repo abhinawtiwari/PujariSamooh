@@ -9,7 +9,7 @@ PEER_PORT = 33301    # Port for listening to other peers
 
 ROUTER_HOST = '10.35.70.28'
 ROUTER_PORT = 33334
-BACKUP_ROUTER_HOST = '10.35.70.34'
+BACKUP_ROUTER_HOST = '10.35.70.26'
 BACKUP_ROUTER_PORT = 33334
 
 vehicle_type = 'car' # bike, truck possible
@@ -125,7 +125,7 @@ class Peer:
             s.close()
         except Exception:
             print('\n')
-            print(traceback.format_exc())
+            # print(traceback.format_exc())
             print("An exception occured while connecting to main router. Checking backup router.")
             server_tup = (BACKUP_ROUTER_HOST, BACKUP_ROUTER_PORT)
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
