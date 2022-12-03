@@ -6,7 +6,7 @@ read -s username
 echo "Enter Password: "
 read -s passName
 
-basedir = $PWD
+basedir=$PWD
 echo $PWD
 
 nohup python3 router.py &
