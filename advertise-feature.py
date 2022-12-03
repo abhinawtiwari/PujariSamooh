@@ -3,6 +3,7 @@ import threading
 import time
 import base64
 import random 
+import sys
 import traceback
 
 PEER_PORT = 33301    # Port for listening to other peers
@@ -14,24 +15,28 @@ BACKUP_ROUTER_PORT = 33334
 
 vehicle_type = 'car' # bike, truck possible
 
+# contributed by Chirag, Lochlann and Abhinaw
 features_dict = {
     "truck_advertise_string": '[truck/speed, truck/proximity, truck/pressure, truck/light-on, truck/wiper-on, truck/passengers-count, truck/fuel, truck/engine-temperature]',
     "car_advertise_string": '[car/speed, car/proximity, car/pressure, car/light-on, car/wiper-on, car/passengers-count, car/fuel, car/engine-temperature]',
     "bike_advertise_string": '[bike/speed, bike/proximity, bike/pressure, bike/light-on, bike/wiper-on, bike/passengers-count, bike/fuel, bike/engine-temperature]'
 }
 
+# contributed by Chirag, Lochlann and Abhinaw
 def bencode(toEncode):
     ascii_encoded = toEncode.encode("ascii")
     base64_bytes = base64.b64encode(ascii_encoded)
     base64_string = base64_bytes.decode("ascii")
     return base64_string
 
+# contributed by Chirag, Lochlann and Abhinaw
 def bdecode(toDecode):
     base64_bytes = toDecode.encode("ascii")
     sample_string_bytes = base64.b64decode(base64_bytes)
     sample_string = sample_string_bytes.decode("ascii")
     return sample_string
 
+# contributed by Chirag, Lochlann and Abhinaw
 def sendAck(conn, raddr, result):
         try:
             msg = result
@@ -40,18 +45,21 @@ def sendAck(conn, raddr, result):
             print(traceback.format_exc())
             print('exception occurred while sending acknowledgement: ', Exception)
 
+# contributed by Chirag, Lochlann and Abhinaw
 def senseSpeed():
     baseSpeed = 80
     randomMix = random.randint(-10, 10)
     res = baseSpeed + randomMix
     return str(res)
 
+# contributed by Chirag, Lochlann and Abhinaw
 def senseProximity():
     baseProximity = 20
     randomMix = random.randint(-10, 10)
     res = baseProximity + randomMix
     return str(res)
 
+# contributed by Chirag, Lochlann and Abhinaw
 def sensePressure():
     if vehicle_type == 'car':
         val = random.randint(30, 33) # car tyre pressure
@@ -61,14 +69,17 @@ def sensePressure():
         val = random.randint(80, 131) # truck tyre pressure
     return str(val)
 
+# contributed by Chirag, Lochlann and Abhinaw
 def senseLight():
     state = ['on', 'off', 'faulty']
     return random.choice(state)
 
+# contributed by Chirag, Lochlann and Abhinaw
 def senseWiper():
     state = ['off', 'on', 'faulty']
     return random.choice(state)
 
+# contributed by Chirag, Lochlann and Abhinaw
 def sensePassengerCount():
     if vehicle_type == 'car':
         val = random.randint(1, 6)
@@ -76,16 +87,19 @@ def sensePassengerCount():
         val = random.randint(1, 3)
     return str(val)
 
+# contributed by Chirag, Lochlann and Abhinaw
 def senseFuel():
     state = ['low', 'medium', 'full']
     return random.choice(state)
 
+# contributed by Chirag, Lochlann and Abhinaw
 def senseEngineTemperature():
     baseTemp = 200
     randomMix = random.randint(-5, 20)
     res = baseTemp + randomMix
     return str(res)
 
+# contributed by Chirag, Lochlann and Abhinaw
 def callActuator(interest):
     if interest.lower() == "speed":
         return senseSpeed()
@@ -104,6 +118,7 @@ def callActuator(interest):
     elif interest.lower() == "engine-temperature":
         return senseEngineTemperature()
 
+# contributed by Chirag, Lochlann and Abhinaw
 class Peer:
     def __init__(self, host, port):
         self.host = host
@@ -138,6 +153,7 @@ class Peer:
             s.close()
         
 
+# contributed by Chirag, Lochlann and Abhinaw
 def receiveData():
     print("listening for actuation requests")
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -163,14 +179,17 @@ def receiveData():
         conn.close()
         time.sleep(1)
 
+# contributed by Chirag, Lochlann and Abhinaw
 def main():
     hostname = socket.gethostname()
     host = socket.gethostbyname(hostname)
     peer = Peer(host, PEER_PORT)
 
-    print('\n')
-    print('Enter vehicle type (truck/car/bike): ')
-    val = input()
+    # print('\n')
+    # print('Enter vehicle type (truck/car/bike): ')
+    # val = input()
+    val = sys.argv[1]
+
     global vehicle_type
     vehicle_type = val
         

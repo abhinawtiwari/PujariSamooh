@@ -16,7 +16,7 @@ map_dict = {}
 #     for key, val in temp_dict.items():
 #         print("{:<25} | {:<15}".format(key, str(val)))
 
-
+# Assisted by Chirag, written by Abhinaw in collaboration with other teams
 def tabular_display(temp_dict):
     print("{:<25} | {:<15}".format('Features', 'Vehicle'))
     for key, val in temp_dict.items():
@@ -26,7 +26,7 @@ def tabular_display(temp_dict):
             new_val.append(v)
         print("{:<25} | {:<15}".format(key, str(new_val)))
 
-
+# This whole class and all methods inside it were written by Abhinaw (assisted by Chirag and Lochlann) in collaboration with other teams
 class Peer:
     def __init__(self, host, port):
         self.host = host
@@ -114,7 +114,7 @@ class Peer:
 
                 if peer != (self.host, self.port, action_list) and peer not in self.peers:
                     self.peers.add(peer)
-                    t = threading.Timer(45, self.removeDueToInactivity, [peer])
+                    t = threading.Timer(450, self.removeDueToInactivity, [peer])
                     t.start()
                     # print('Known vehicles:', self.peers)
                     print('\n')
@@ -260,6 +260,7 @@ class Peer:
         # print("What is router table now", tabular_display(map_dict))
 
 
+# Contributed by Abhinaw in collaboration with other teams
 def main():
     hostname = socket.gethostname()
     host = socket.gethostbyname(hostname)

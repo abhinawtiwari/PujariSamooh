@@ -14,6 +14,7 @@ BACKUP_ROUTER_PORT = 33310
 
 vehicle_status_dict = {}
 
+# Contributed by Chirag
 def prediction(input_list):
     try:
         loaded_model = pickle.load(open(filename, 'rb'))
@@ -32,7 +33,8 @@ def prediction(input_list):
         print('\n')
         state = [True, False]
         return random.choice(state)
-    
+
+# contributed by Abhinaw
 def getVehicleNumber(vehicleType):
     if vehicleType == 'truck':
         return 1
@@ -41,12 +43,14 @@ def getVehicleNumber(vehicleType):
     else:
         return 3
 
+# contributed by Chirag
 def processPredicitonList(li):
     res = []
     for l in li:
         res.append(int(l))
     return res 
 
+# contributed by Chirag
 def aimlPrediction(interest_packet):
     # print('starting AI/ML prediciton')
     # print(vehicle_status_dict)
@@ -67,18 +71,21 @@ def aimlPrediction(interest_packet):
         print("\033[1;35m AI/ML prediction: ", vehicle, " does not need inspection \033[0m \n")
         # print("AI/ML prediction: ", vehicle, " does not need inspection")
 
+# Contributed by Chirag
 def bencode(toEncode):
     ascii_encoded = toEncode.encode("ascii")
     base64_bytes = base64.b64encode(ascii_encoded)
     base64_string = base64_bytes.decode("ascii")
     return base64_string
 
+# Contributed by Chirag
 def bdecode(toDecode):
     base64_bytes = toDecode.encode("ascii")
     sample_string_bytes = base64.b64decode(base64_bytes)
     sample_string = sample_string_bytes.decode("ascii")
     return sample_string
 
+# improved by Lochlann
 def actuate(interest_packet, data_packet):
     print("Data packet received: ", data_packet, ' for interest packet ', interest_packet)
     if interest_packet == 'truck/speed':
@@ -247,7 +254,8 @@ def actuate(interest_packet, data_packet):
         print("\033[1;32m \n *** Sending data for AI/ML prediction ***  \033[0m \n")
         # print('\n *** Sending data for AI/ML prediction ***')
         aimlPrediction(interest_packet)
-    
+
+# Contributed by Abhinaw 
 def sendInterest(interest):
         router = (ROUTER_IP, ROUTER_PORT)
         backup_router = (BACKUP_ROUTER_IP, BACKUP_ROUTER_PORT)
@@ -274,6 +282,7 @@ def sendInterest(interest):
             actuate(interest, bdecode(ack.decode('utf-8')))
             s.close()
 
+# contributed by Abhinaw
 def main():
     truck_interest_packets = ['truck/speed', 'interest/corrupted', 'truck/proximity', 'truck/pressure', 'truck/light-on', 'truck/wiper-on', 'truck/passengers-count', 'truck/fuel', 'truck/engine-temperature']
     bike_interest_packets = ['bike/speed', 'interest/corrupted', 'bike/proximity', 'bike/pressure', 'bike/light-on', 'bike/wiper-on', 'bike/passengers-count', 'bike/fuel', 'bike/engine-temperature']
