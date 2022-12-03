@@ -1,7 +1,7 @@
 Section 1 (main section):
 login to rasp-028.berry.scss.tcd.ie (rasp-028 is mandatory here, since it's hardcoded to act as a router)
 unzip the p3-integrated file from the submission and copy the p3-integrated folder to any path on the pi
-cd to the p3-integrated folder and run the following:
+cd to the p3-integrated folder (this folder contains runme.sh) and run the following:
 
 chmod +x runme.sh
 chmod +x pass.sh
