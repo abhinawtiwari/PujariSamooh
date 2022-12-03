@@ -3,11 +3,11 @@ login to rasp-028.berry.scss.tcd.ie (rasp-028 is mandatory here, since it's hard
 unzip the p3-integrated file from the submission and copy the p3-integrated folder to any path on the pi
 cd to the p3-integrated folder (this folder contains runme.sh) and run the following:
 
-chmod +x runme.sh
-chmod +x pass.sh
+chmod +x runme.sh (to give permisson)
+chmod +x pass.sh (to give permission)
 ./runme.sh
 
-When terminal prompts with "system ready" message, run "python3 send-interest.py" and press 1 to send interest packets for a truck.
+When terminal prompts with "system ready" message, run "python3 send-interest.py" and press 1 to send interest packets for a truck. ( can press 2 or 3 for interest packets of other vehicle types, which are served based on availability of those vehicles in the network )
 This should send a series of interest packets, receive corresponding data packets, actuate on the received data and output on screen.
 You should see a series of messages on screen. Sample messages are shown in appendix at the end of this readme for reference.
 
@@ -53,7 +53,7 @@ enter password
 cd www/p3-integrated/
 
 python3 send-interest.py
-press 1 when prompted
+press 1 when prompted for sending truck's interest packets (you can choose 2 or 3 for other vehicle types, but receiving data packets for those depends on the availability of those vehicles in the network. Availability can be checked in the terminal that is running router.py. It shows number and types of vehicles currently present in the network)
 
 pressing 1 should start the sending of interest packets and do their actuation upon receiving data for those. See appendix for sample output.
 
